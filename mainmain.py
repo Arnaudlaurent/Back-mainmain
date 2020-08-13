@@ -195,6 +195,7 @@ class VLCService(Service):
     def play_media_file(self, filename):
         print("play : " + filename)
         self.movieTitle = filename
+        print("unicode : " + unicode(filename))
         self.mediaplayer.set_media(self.instance.media_new(unicode(filename)))
         self.mediaplayer.play()
 
