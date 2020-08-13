@@ -260,7 +260,7 @@ class StopCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("Enter write stop")
-        ''.join([str(v) for v in value])
+        val = ''.join([str(v) for v in value])
         print(val)
         self.service.stop()
 
