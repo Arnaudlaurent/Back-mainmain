@@ -214,9 +214,8 @@ class PlayCharacteristic(Characteristic):
         self.add_descriptor(PlayDescriptor(self))
 
     def WriteValue(self, value, options):
-        val = str(value[0])
-        print(val)
-        self.service.play_media_file(val)
+        print(value)
+        self.service.play_media_file(value)
 
     def ReadValue(self, options):
         value = []
@@ -255,8 +254,7 @@ class StopCharacteristic(Characteristic):
         self.add_descriptor(StopDescriptor(self))
 
     def WriteValue(self, value, options):
-        val = str(value[0])
-        print(val)
+        print(value)
         self.service.stop()
 
     def ReadValue(self, options):
