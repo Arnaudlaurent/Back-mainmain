@@ -148,6 +148,7 @@ class UnitCharacteristic(Characteristic):
 
         return value
 
+
 class UnitDescriptor(Descriptor):
     UNIT_DESCRIPTOR_UUID = "2901"
     UNIT_DESCRIPTOR_VALUE = "Temperature Units (F or C)"
@@ -167,8 +168,67 @@ class UnitDescriptor(Descriptor):
 
         return value
 
+
+class VLCService(Service):
+    THERMOMETER_SVC_UUID = "00000001-1440-49ad-a3a2-d74bf3958bcf"
+
+    def __init__(self, index):
+        self.movieTitle = ""
+
+        Service.__init__(self, index, self.THERMOMETER_SVC_UUID, True)
+        self.add_characteristic(PlayCharacteristic(self))
+
+    def set_movie(self, movie):
+        self.movieTitle = movie
+
+    def get_movie(self):
+        return self.movieTitle
+
+
+class PlayCharacteristic(Characteristic):
+    PLAY_CHARACTERISTIC_UUID = "00000002-1440-49ad-a3a2-d74bf3958bcf"
+
+    def __init__(self, service):
+        Characteristic.__init__(
+                self, self.PLAY_CHARACTERISTIC_UUID,
+                ["read", "write"], service)
+        self.add_descriptor(UnitDescriptor(self))
+
+    def WriteValue(self, value, options):
+        val = str(value[0])
+        print(val)
+        self.service.set_movie(val)
+
+    def ReadValue(self, options):
+        value = []
+        val = self.service.get_movie()
+        value.append(dbus.Byte(val.encode()))
+        return value
+
+
+class PlayDescriptor(Descriptor):
+    PLAY_DESCRIPTOR_UUID = "2901"
+    PLAY_DESCRIPTOR_VALUE = "Play"
+
+    def __init__(self, characteristic):
+        Descriptor.__init__(
+                self, self.PLAY_DESCRIPTOR_UUID,
+                ["read"],
+                characteristic)
+
+    def ReadValue(self, options):
+        value = []
+        desc = self.PLAY_DESCRIPTOR_VALUE
+
+        for c in desc:
+            value.append(dbus.Byte(c.encode()))
+
+        return value
+
+
 app = Application()
 app.add_service(PiService(0))
+app.add_service(VLCService(0))
 app.register()
 
 adv = MainMainAdvertisement(0)
