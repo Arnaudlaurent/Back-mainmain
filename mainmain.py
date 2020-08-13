@@ -218,8 +218,9 @@ class PlayCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("Enter write play")
-        print(value)
-        self.service.play_media_file(value)
+        val = str(value)
+        print(val)
+        self.service.play_media_file(val)
 
     def ReadValue(self, options):
         value = []
@@ -259,7 +260,8 @@ class StopCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("Enter write stop")
-        print(value)
+        val = str(value)
+        print(val)
         self.service.stop()
 
     def ReadValue(self, options):
