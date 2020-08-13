@@ -228,7 +228,7 @@ class PlayDescriptor(Descriptor):
 
 app = Application()
 app.add_service(PiService(0))
-app.add_service(VLCService(0))
+app.add_service(VLCService(1))
 app.register()
 
 adv = MainMainAdvertisement(0)
