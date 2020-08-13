@@ -226,7 +226,8 @@ class PlayCharacteristic(Characteristic):
     def ReadValue(self, options):
         value = []
         val = self.service.get_movie()
-        value.append(dbus.Byte(val.encode()))
+        print(val)
+        value.append(dbus.Byte(x) for x in val.encode())
         return value
 
 
@@ -268,6 +269,7 @@ class StopCharacteristic(Characteristic):
     def ReadValue(self, options):
         value = []
         val = self.service.get_movie()
+        print(val)
         value.append(dbus.Byte(val.encode()))
         return value
 
