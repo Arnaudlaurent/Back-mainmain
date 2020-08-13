@@ -193,6 +193,7 @@ class VLCService(Service):
         return self.movieTitle
 
     def play_media_file(self, filename):
+        print("play : " + filename)
         self.movieTitle = filename
         self.mediaplayer.set_media(self.instance.media_new(unicode(filename)))
         self.mediaplayer.play()
@@ -201,6 +202,7 @@ class VLCService(Service):
         self.mediaplayer.play()
 
     def stop(self):
+        print("stop")
         self.movieTitle = ""
         self.mediaplayer.stop()
 
@@ -215,6 +217,7 @@ class PlayCharacteristic(Characteristic):
         self.add_descriptor(PlayDescriptor(self))
 
     def WriteValue(self, value, options):
+        print("Enter write play")
         print(value)
         self.service.play_media_file(value)
 
@@ -255,6 +258,7 @@ class StopCharacteristic(Characteristic):
         self.add_descriptor(StopDescriptor(self))
 
     def WriteValue(self, value, options):
+        print("Enter write stop")
         print(value)
         self.service.stop()
 

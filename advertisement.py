@@ -80,7 +80,6 @@ class Advertisement(dbus.service.Object):
     def add_service_uuid(self, uuid):
         if not self.service_uuids:
             self.service_uuids = []
-        print(uuid)
         self.service_uuids.append(uuid)
 
     def add_solicit_uuid(self, uuid):
@@ -96,7 +95,6 @@ class Advertisement(dbus.service.Object):
     def add_service_data(self, uuid, data):
         if not self.service_data:
             self.service_data = dbus.Dictionary({}, signature="sv")
-        print(uuid)
         self.service_data[uuid] = dbus.Array(data, signature="y")
 
     def add_local_name(self, name):
