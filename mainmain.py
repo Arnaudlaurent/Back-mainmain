@@ -170,12 +170,12 @@ class UnitDescriptor(Descriptor):
 
 
 class VLCService(Service):
-    THERMOMETER_SVC_UUID = "00000001-1440-49ad-a3a2-d74bf3958bcf"
+    VLC_SVC_UUID = "00000001-1440-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, index):
         self.movieTitle = ""
 
-        Service.__init__(self, index, self.THERMOMETER_SVC_UUID, True)
+        Service.__init__(self, index, self.VLC_SVC_UUID, True)
         self.add_characteristic(PlayCharacteristic(self))
 
     def set_movie(self, movie):
