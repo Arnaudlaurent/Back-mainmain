@@ -187,6 +187,7 @@ class VLCService(Service):
 
         Service.__init__(self, index, self.VLC_SVC_UUID, True)
         self.add_characteristic(PlayCharacteristic(self))
+        self.add_characteristic(StopCharacteristic(self))
 
     def get_movie(self):
         return self.movieTitle
@@ -265,18 +266,18 @@ class StopCharacteristic(Characteristic):
 
 
 class StopDescriptor(Descriptor):
-    PLAY_DESCRIPTOR_UUID = "2901"
-    PLAY_DESCRIPTOR_VALUE = "Stop"
+    STOP_DESCRIPTOR_UUID = "2901"
+    STOP_DESCRIPTOR_VALUE = "Stop"
 
     def __init__(self, characteristic):
         Descriptor.__init__(
-                self, self.PLAY_DESCRIPTOR_UUID,
+                self, self.STOP_DESCRIPTOR_UUID,
                 ["read"],
                 characteristic)
 
     def ReadValue(self, options):
         value = []
-        desc = self.PLAY_DESCRIPTOR_VALUE
+        desc = self.STOP_DESCRIPTOR_VALUE
 
         for c in desc:
             value.append(dbus.Byte(c.encode()))
