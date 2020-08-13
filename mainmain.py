@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import dbus
+import vlc
 
 from advertisement import Advertisement
 from service import Application, Service, Characteristic, Descriptor
@@ -30,14 +31,16 @@ from gpiozero import CPUTemperature
 GATT_CHRC_IFACE = "org.bluez.GattCharacteristic1"
 NOTIFY_TIMEOUT = 5000
 
+
 class MainMainAdvertisement(Advertisement):
     def __init__(self, index):
         Advertisement.__init__(self, index, "peripheral")
         self.add_local_name("Mainmain")
         self.include_tx_power = True
 
+
 class PiService(Service):
-    THERMOMETER_SVC_UUID = "00000001-710e-4a5b-8d75-3e5b444bc3cf"
+    THERMOMETER_SVC_UUID = "00000001-0000-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, index):
         self.farenheit = True
@@ -52,8 +55,9 @@ class PiService(Service):
     def set_farenheit(self, farenheit):
         self.farenheit = farenheit
 
+
 class TempCharacteristic(Characteristic):
-    TEMP_CHARACTERISTIC_UUID = "00000002-710e-4a5b-8d75-3e5b444bc3cf"
+    TEMP_CHARACTERISTIC_UUID = "00000001-0001-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, service):
         self.notifying = False
@@ -104,6 +108,7 @@ class TempCharacteristic(Characteristic):
 
         return value
 
+
 class TempDescriptor(Descriptor):
     TEMP_DESCRIPTOR_UUID = "2901"
     TEMP_DESCRIPTOR_VALUE = "CPU Temperature"
@@ -123,8 +128,9 @@ class TempDescriptor(Descriptor):
 
         return value
 
+
 class UnitCharacteristic(Characteristic):
-    UNIT_CHARACTERISTIC_UUID = "00000003-710e-4a5b-8d75-3e5b444bc3cf"
+    UNIT_CHARACTERISTIC_UUID = "00000001-0002-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, service):
         Characteristic.__init__(
@@ -170,34 +176,47 @@ class UnitDescriptor(Descriptor):
 
 
 class VLCService(Service):
-    VLC_SVC_UUID = "00000001-1440-49ad-a3a2-d74bf3958bcf"
+    VLC_SVC_UUID = "00000002-0000-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, index):
         self.movieTitle = ""
 
+        # creating a basic vlc instance
+        self.instance = vlc.Instance()
+        self.mediaplayer = self.instance.media_player_new()
+
         Service.__init__(self, index, self.VLC_SVC_UUID, True)
         self.add_characteristic(PlayCharacteristic(self))
-
-    def set_movie(self, movie):
-        self.movieTitle = movie
 
     def get_movie(self):
         return self.movieTitle
 
+    def play_media_file(self, filename):
+        self.movieTitle = filename
+        self.mediaplayer.set_media(self.instance.media_new(unicode(filename)))
+        self.mediaplayer.play()
+
+    def play(self):
+        self.mediaplayer.play()
+
+    def stop(self):
+        self.movieTitle = ""
+        self.mediaplayer.stop()
+
 
 class PlayCharacteristic(Characteristic):
-    PLAY_CHARACTERISTIC_UUID = "00000002-1440-49ad-a3a2-d74bf3958bcf"
+    PLAY_CHARACTERISTIC_UUID = "00000002-0001-49ad-a3a2-d74bf3958bcf"
 
     def __init__(self, service):
         Characteristic.__init__(
                 self, self.PLAY_CHARACTERISTIC_UUID,
                 ["read", "write"], service)
-        self.add_descriptor(UnitDescriptor(self))
+        self.add_descriptor(PlayDescriptor(self))
 
     def WriteValue(self, value, options):
         val = str(value[0])
         print(val)
-        self.service.set_movie(val)
+        self.service.play_media_file(val)
 
     def ReadValue(self, options):
         value = []
@@ -209,6 +228,47 @@ class PlayCharacteristic(Characteristic):
 class PlayDescriptor(Descriptor):
     PLAY_DESCRIPTOR_UUID = "2901"
     PLAY_DESCRIPTOR_VALUE = "Play"
+
+    def __init__(self, characteristic):
+        Descriptor.__init__(
+                self, self.PLAY_DESCRIPTOR_UUID,
+                ["read"],
+                characteristic)
+
+    def ReadValue(self, options):
+        value = []
+        desc = self.PLAY_DESCRIPTOR_VALUE
+
+        for c in desc:
+            value.append(dbus.Byte(c.encode()))
+
+        return value
+
+
+class StopCharacteristic(Characteristic):
+    STOP_CHARACTERISTIC_UUID = "00000002-0002-49ad-a3a2-d74bf3958bcf"
+
+    def __init__(self, service):
+        Characteristic.__init__(
+                self, self.STOP_CHARACTERISTIC_UUID,
+                ["read", "write"], service)
+        self.add_descriptor(StopDescriptor(self))
+
+    def WriteValue(self, value, options):
+        val = str(value[0])
+        print(val)
+        self.service.stop()
+
+    def ReadValue(self, options):
+        value = []
+        val = self.service.get_movie()
+        value.append(dbus.Byte(val.encode()))
+        return value
+
+
+class StopDescriptor(Descriptor):
+    PLAY_DESCRIPTOR_UUID = "2901"
+    PLAY_DESCRIPTOR_VALUE = "Stop"
 
     def __init__(self, characteristic):
         Descriptor.__init__(
