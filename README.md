@@ -29,7 +29,7 @@ Use to interact with the pi as shutdown, CPU temp, ...
 
 #### Temperature Unit
 
-- Write: Change the temp unit`
+- Write: Change the temp unit
 - Read: Get temp unit
 
 `UUID : 00000001-0002-49ad-a3a2-d74bf3958bcf`
@@ -48,9 +48,14 @@ Use to interact with VLC
 `UUID : 00000002-0001-49ad-a3a2-d74bf3958bcf`
 
 #### Stop
-###### To be modify
 - Write : Stop the movie
 
 `UUID : 00000002-0002-49ad-a3a2-d74bf3958bcf`
+
+#### Pause
+- Write : Toggle pause the movie
+- Read : Return if paused
+
+`UUID : 00000002-0003-49ad-a3a2-d74bf3958bcf`
 
 
