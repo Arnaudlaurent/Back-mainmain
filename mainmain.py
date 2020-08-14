@@ -184,10 +184,12 @@ class VLCService(Service):
         # creating a basic vlc instance
         self.instance = vlc.Instance()
         self.mediaplayer = self.instance.media_player_new()
+        self.isPause = False
 
         Service.__init__(self, index, self.VLC_SVC_UUID, True)
         self.add_characteristic(PlayCharacteristic(self))
         self.add_characteristic(StopCharacteristic(self))
+        self.add_characteristic(PauseCharacteristic(self))
 
     def get_movie(self):
         return self.movieTitle
@@ -195,8 +197,8 @@ class VLCService(Service):
     def play_media_file(self, filename):
         print("play : " + filename)
         self.movieTitle = filename
-        print("unicode : " + filename)
         self.mediaplayer.set_media(self.instance.media_new(filename))
+        self.isPause = False
         self.mediaplayer.play()
 
     def play(self):
@@ -206,6 +208,14 @@ class VLCService(Service):
         print("stop")
         self.movieTitle = ""
         self.mediaplayer.stop()
+
+    def pause(self):
+        print("pause")
+        self.mediaplayer.pause()
+        self.isPause = not self.isPause
+        
+    def is_pause(self):
+        return self.isPause
 
 
 class PlayCharacteristic(Characteristic):
@@ -227,7 +237,8 @@ class PlayCharacteristic(Characteristic):
         value = []
         val = self.service.get_movie()
         print(val)
-        value.append(dbus.Byte(x) for x in val.encode())
+        for char in val:
+            value.append(dbus.Byte(char.encode()))
         return value
 
 
@@ -262,15 +273,14 @@ class StopCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("Enter write stop")
-        val = ''.join([str(v) for v in value])
-        print(val)
         self.service.stop()
 
     def ReadValue(self, options):
         value = []
         val = self.service.get_movie()
         print(val)
-        value.append(dbus.Byte(val.encode()))
+        for char in val:
+            value.append(dbus.Byte(char.encode()))
         return value
 
 
@@ -287,6 +297,48 @@ class StopDescriptor(Descriptor):
     def ReadValue(self, options):
         value = []
         desc = self.STOP_DESCRIPTOR_VALUE
+
+        for c in desc:
+            value.append(dbus.Byte(c.encode()))
+
+        return value
+
+
+class PauseCharacteristic(Characteristic):
+    PAUSE_CHARACTERISTIC_UUID = "00000002-0003-49ad-a3a2-d74bf3958bcf"
+
+    def __init__(self, service):
+        Characteristic.__init__(
+                self, self.PAUSE_CHARACTERISTIC_UUID,
+                ["read", "write"], service)
+        self.add_descriptor(PauseDescriptor(self))
+
+    def WriteValue(self, value, options):
+        print("Enter write pause")
+        self.service.pause()
+
+    def ReadValue(self, options):
+        value = []
+        val = self.service.is_pause()
+        print(val)
+        for char in val:
+            value.append(dbus.Byte(char.encode()))
+        return value
+
+
+class PauseDescriptor(Descriptor):
+    PAUSE_DESCRIPTOR_UUID = "2901"
+    PAUSE_DESCRIPTOR_VALUE = "Pause"
+
+    def __init__(self, characteristic):
+        Descriptor.__init__(
+                self, self.PAUSE_DESCRIPTOR_UUID,
+                ["read"],
+                characteristic)
+
+    def ReadValue(self, options):
+        value = []
+        desc = self.PAUSE_DESCRIPTOR_VALUE
 
         for c in desc:
             value.append(dbus.Byte(c.encode()))
