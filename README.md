@@ -19,40 +19,38 @@ python3 mainmain.py
 
 Use to interact with the pi as shutdown, CPU temp, ...
 
-**UUID** : 00000001-0000-49ad-a3a2-d74bf3958bcf 
+`UUID : 00000001-0000-49ad-a3a2-d74bf3958bcf`
 
 #### CPU 
 
-**READ** : Get CPU temp
+- Read: Get CPU temp
 
-**UUID** : 00000001-0001-49ad-a3a2-d74bf3958bcf
+`UUID : 00000001-0001-49ad-a3a2-d74bf3958bcf`
 
 #### Temperature Unit
 
-**WRITE** : Change the temp unit 
+- Write: Change the temp unit`
+- Read: Get temp unit
 
-**READ** : Get temp unit 
-
-**UUID** : 00000001-0002-49ad-a3a2-d74bf3958bcf
+`UUID : 00000001-0002-49ad-a3a2-d74bf3958bcf`
 
 ### Service VLC
 
 Use to interact with VLC
 
-**UUID** : 00000002-0000-49ad-a3a2-d74bf3958bcf
+`UUID : 00000002-0000-49ad-a3a2-d74bf3958bcf`
 
 #### Play
 
-**WRITE** : Play the given movie
+- Write: Play the given movie
+- Read: Get the current movie playing
 
-**READ** : Get the current movie playing
-
-**UUID** : 00000002-0001-49ad-a3a2-d74bf3958bcf
+`UUID : 00000002-0001-49ad-a3a2-d74bf3958bcf`
 
 #### Stop
 ###### To be modify
-**WRITE** : Stop the movie
+- Write : Stop the movie
 
-**UUID** : 00000002-0002-49ad-a3a2-d74bf3958bcf
+`UUID : 00000002-0002-49ad-a3a2-d74bf3958bcf`
 
 
