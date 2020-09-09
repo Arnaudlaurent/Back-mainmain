@@ -6,6 +6,7 @@ BLE GATT server for the Mainmain app
 ## Requirement
 
 Pi4 with Raspbian and bluetooth installed (The pre-installed one is enough)
+Install VLC : `pip3 install python-vlc`
 
 ## Installation
 ```
