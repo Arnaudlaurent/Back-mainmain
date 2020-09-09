@@ -2,6 +2,7 @@
 
 ## Description
 BLE GATT server for the Mainmain app
+Project based on : https://github.com/Douglas6/cputemp
 
 ## Requirement
 
